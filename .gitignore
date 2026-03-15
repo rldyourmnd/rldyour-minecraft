@@ -1,0 +1,50 @@
+# Minecraft Server
+*.jar
+*.zip
+eula.txt
+
+# World Data
+world/
+world_nether/
+world_the_end/
+DIM-1/
+DIM1/
+
+# Forge
+libraries/
+.mixin.out/
+.forge/
+
+# Logs and Reports
+logs/
+crash-reports/
+*.log
+*.log.gz
+hs_err_pid*.log
+
+# Player Data
+ops.json
+whitelist.json
+banned-ips.json
+banned-players.json
+usercache.json
+usernamecache.json
+
+# Backups
+backups/
+
+# Lock files
+*.lck
+session.lock
+
+# Environment
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.iml
+.vscode/
