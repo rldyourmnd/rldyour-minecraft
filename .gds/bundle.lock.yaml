@@ -5,11 +5,11 @@ bundle:
   version: "0.1.0-dev"
   release_sequence: 0
   channel: "development"
-  source_commit: "97e8bbaa3a0734b156b03bad704503bc46d7575b"
-  digest: "sha256:dab18b60c3df676da3f726c5f5dda80d2e70088cd4f633479e1e448b778894f0"
+  source_commit: "5912c2259c99ac300eaea6b6d7b982eefd90a854"
+  digest: "sha256:146dd8b4a5a1eedb1a9f99a2c8be12e924397ddd51667e194a0c5d81d712687a"
 
 projection:
-  input_digest: "sha256:57655b579d7cda78cb5d647272436d7e6ec52da945143692d058036fc81efaa1"
+  input_digest: "sha256:4ac536b9ce517c6fd1d7faf33e27059a15a528fc431f4068725cc54c020fb4b0"
   output_digest: "sha256:9695024be112b2d581db6cd17e0e89d143f54768549dcd35b3193318ab26615e"
   files:
     - path: ".gds/compiled-policy.json"
