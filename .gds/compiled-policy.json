@@ -2,8 +2,8 @@
   "schema_version": 1,
   "compiled_policy": {
     "repository_id": "repo_01KYSBEXBBC8FCW165WT4MMSHW",
-    "bundle_version": "0.1.0-dev",
-    "digest": "sha256:a1547d2de5f7de3ca835c923c2e6358fb5580f14ae5cae315daaf0d36beb43a4"
+    "bundle_version": "0.4.0-dev",
+    "digest": "sha256:f62cc2b9693e4defcd3aeb13168cebf99ce714bf8a108357bac74865e538c48f"
   },
   "sources": [
     {
@@ -12,7 +12,7 @@
       "priority": 100,
       "distribution": "public",
       "path": "policies/base/repository-default.yaml",
-      "digest": "sha256:e74e6dc4429eda77b02e0f5267dc0db5b25b1a666262660b9dd992d53922f15c"
+      "digest": "sha256:538f486d49620c169cbbac77745ce2ecc21010ebd4a564017c79cefbb468ca1e"
     },
     {
       "id": "personal-default",
@@ -92,6 +92,11 @@
         "squash_merge_commit_title": {
           "management": "managed",
           "value": "PR_TITLE"
+        }
+      },
+      "releases": {
+        "immutable": {
+          "management": "observed"
         }
       },
       "rulesets": {
@@ -339,6 +344,13 @@
       "operation": "set"
     },
     "/effective/github/merge/squash_merge_commit_title/value": {
+      "source": "repository-default",
+      "tier": "base",
+      "priority": 100,
+      "file": "policies/base/repository-default.yaml",
+      "operation": "set"
+    },
+    "/effective/github/releases/immutable/management": {
       "source": "repository-default",
       "tier": "base",
       "priority": 100,
