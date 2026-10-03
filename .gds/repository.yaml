@@ -13,7 +13,7 @@ provider:
   name: rldyour-minecraft
 classification:
   portfolios:
-  - portfolio:personal-projects
+  - "portfolio:rldyourmnd"
   visibility_contract: private
   data_classification: private
 policy:
