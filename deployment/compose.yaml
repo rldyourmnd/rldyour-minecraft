@@ -3,6 +3,7 @@ services:
   minecraft:
     image: ${MINECRAFT_IMAGE:?Set the pinned Minecraft image}
     platform: linux/amd64
+    cgroup_parent: minecraft.slice
     env_file: server.env
     cpus: ${SERVER_CPUS:?Set the CPU ceiling}
     mem_limit: ${SERVER_MEMORY_LIMIT:?Set the process memory ceiling}
@@ -28,6 +29,7 @@ services:
   edge:
     image: ${NGINX_IMAGE:?Set the pinned edge image}
     platform: linux/amd64
+    cgroup_parent: minecraft.slice
     network_mode: host
     user: "101:101"
     read_only: true
