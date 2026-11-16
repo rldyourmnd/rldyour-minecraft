@@ -1,0 +1,18 @@
+{
+  "excludeMods": [
+    "OptiFine_*.jar",
+    "AppleSkin-*.jar",
+    "DynamicSurroundings-*.jar",
+    "OreLib-*.jar",
+    "Hwyla-*.jar",
+    "Wawla-*.jar",
+    "MouseTweaks-*.jar",
+    "journeymap-*.jar",
+    "jei_*.jar",
+    "jeibees-*.jar",
+    "jeiintegration_*.jar",
+    "just-enough-harvestcraft-*.jar",
+    "JustEnoughEnergistics-*.jar",
+    "JustEnoughResources-*.jar"
+  ]
+}
