@@ -93,3 +93,12 @@ All runtime settings are in `.env`:
 - Mod JARs are excluded from git (too large). Document your modlist separately
 - The `config/` directory is tracked - commit config changes to keep server reproducible
 - `online-mode=true` by default for security. Disable only for offline/LAN play
+
+## Source checks
+
+Run `just check` to validate every shell script, the GitHub workflows and source
+history. CI prepares the exact tools declared in `.github/workflows/ci.yml` and the
+archive/member hashes in `.github/ci-tools.json`;
+local checks use those tools from `PATH`. `just verify` runs the complete source
+check. These commands do not install or start the server, create a backup or restore
+a world.
