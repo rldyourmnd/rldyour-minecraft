@@ -1,5 +1,7 @@
 import hashlib
 import importlib.util
+import io
+import urllib.error
 import json
 import pathlib
 import tempfile
@@ -91,3 +93,15 @@ class InputTests(unittest.TestCase):
             self.apply(archive, digest)
         self.assertEqual((world / "level.dat").read_bytes(), b"owner data")
         self.assertEqual(list(self.root.iterdir()), [world])
+
+    def test_resume_after_publisher_download_rejection(self):
+        archive, digest = self.bundle()
+        rejection = urllib.error.HTTPError("https://invalid.example/unused", 403, "Forbidden", {}, None)
+        with patch.object(pack.urllib.request, "urlopen", side_effect=rejection):
+            with self.assertRaises(urllib.error.HTTPError):
+                self.apply(archive, digest)
+        self.assertTrue((self.root / "ops.json").exists())
+        self.assertFalse((self.root / ".pack-receipt.json").exists())
+        with patch.object(pack.urllib.request, "urlopen", return_value=io.BytesIO(self.forge)) as opened:
+            self.assertEqual(self.apply(archive, digest)["modJars"], 1)
+        self.assertEqual(opened.call_args.args[0].get_header("User-agent"), "MinecraftServerInstaller/1.0")

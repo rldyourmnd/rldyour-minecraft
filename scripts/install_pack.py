@@ -101,7 +101,8 @@ def install(archive, expected, settings, policy, artifacts):
     forge = artifacts["forgeInstaller"]
     if not package.exists():
         part = package.with_suffix(".part")
-        with urllib.request.urlopen(forge["url"], timeout=60) as response, part.open("wb") as output:
+        request = urllib.request.Request(forge["url"], headers={"User-Agent": "MinecraftServerInstaller/1.0"})
+        with urllib.request.urlopen(request, timeout=60) as response, part.open("wb") as output:
             while chunk := response.read(1024 * 1024):
                 output.write(chunk)
         if file_hash(part, "sha1") != forge["sha1"]:
