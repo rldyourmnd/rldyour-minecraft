@@ -97,7 +97,8 @@ All runtime settings are in `.env`:
 ## Source checks
 
 Run `just check` to validate every shell script, the GitHub workflows and source
-history. CI prepares the exact tool versions declared in `.github/workflows/ci.yml`;
+history. CI prepares the exact tools declared in `.github/workflows/ci.yml` and the
+archive/member hashes in `.github/ci-tools.json`;
 local checks use those tools from `PATH`. `just verify` runs the complete source
 check. These commands do not install or start the server, create a backup or restore
 a world.
