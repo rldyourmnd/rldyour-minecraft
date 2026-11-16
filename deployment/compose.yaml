@@ -1,0 +1,68 @@
+name: rldyour-minecraft
+services:
+  minecraft:
+    image: ${MINECRAFT_IMAGE:?Set the pinned Minecraft image}
+    platform: linux/amd64
+    cgroup_parent: minecraft.slice
+    env_file: server.env
+    cpus: ${SERVER_CPUS:?Set the CPU ceiling}
+    mem_limit: ${SERVER_MEMORY_LIMIT:?Set the process memory ceiling}
+    memswap_limit: ${SERVER_MEMORY_LIMIT:?Set the process memory ceiling}
+    pids_limit: 512
+    restart: unless-stopped
+    stop_grace_period: 120s
+    ports:
+      - "127.0.0.1:${HOST_LOOPBACK_PORT:?}:${SERVER_PORT:?}"
+    volumes:
+      - data:/data
+    healthcheck:
+      test: ["CMD", "mc-health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 300s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "3"
+  edge:
+    image: ${NGINX_IMAGE:?Set the pinned edge image}
+    platform: linux/amd64
+    cgroup_parent: minecraft.slice
+    network_mode: host
+    user: "101:101"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    cpus: 0.10
+    mem_limit: 64m
+    pids_limit: 16
+    restart: unless-stopped
+    environment:
+      SERVER_PORT: ${SERVER_PORT:?}
+      HOST_LOOPBACK_PORT: ${HOST_LOOPBACK_PORT:?}
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - "envsubst '$$SERVER_PORT $$HOST_LOOPBACK_PORT' < /etc/nginx/game.conf.template > /tmp/game.conf; exec nginx -c /tmp/game.conf -g 'daemon off;'"
+    volumes:
+      - ./nginx.conf.template:/etc/nginx/game.conf.template:ro
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=16m,mode=1777
+    healthcheck:
+      test: ["CMD", "nginx", "-t", "-c", "/tmp/game.conf"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+volumes:
+  data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_DIRECTORY:?Set the host-provisioned data mount}

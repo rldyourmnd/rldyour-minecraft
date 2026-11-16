@@ -1,104 +1,27 @@
-# rldyourmcrft
+# Minecraft 1.12.2 Forge server
 
-Minecraft 1.12.2 Forge modded server setup and configuration.
+A persistent Forge server using pinned publisher containers and a verified, owner-provided mod/configuration bundle. World data and account stores are never imported from the client bundle. Python 3.11+ and Docker Compose are required.
 
-## Requirements
+The runtime configuration is in deployment/server.env. It selects Java 8, Forge, a smaller initial heap, Java maximum, process CPU/memory ceilings and view distance. The host provisions the data filesystem at DATA_DIRECTORY before installation. A named volume binds to that mount; container replacement preserves the world.
 
-- **Java 8** (JDK or JRE) - Forge 1.12.2 is not compatible with Java 9+
-- **4GB+ RAM** recommended (configurable in `.env`)
-- Linux/macOS (Windows: use Git Bash or WSL)
+## Install and run
 
-## Quick Start
+Run scripts/install.sh with the client-input ZIP and its independently declared SHA-256, then scripts/start.sh. Installation verifies the ZIP and every member, excludes client-only mods from deployment/pack-policy.json, checks the Forge installer digest and seeds the selected offline operator. It refuses unknown existing worlds or changed files. Stop the service before changing its pack.
 
-```bash
-# 1. Clone the repository
-git clone git@github.com:rldyourmnd/rldyourmcrft.git
-cd rldyourmcrft
+The bundle is an external deployment input. This repository redistributes no mod JARs or personal world/account data. The owning infrastructure records the exact input location/digest and host filesystem/service declaration.
 
-# 2. Install Forge server
-chmod +x scripts/*.sh
-./scripts/install.sh
+A stream edge publishes the game port. The game container publishes only a loopback backend. RCON and query are disabled. Commands use the packaged console pipe:
 
-# 3. Configure
-cp .env.example .env
-# Edit .env - adjust RAM, Java path
-# Edit server.properties - adjust server settings
+    docker compose --env-file deployment/server.env -f deployment/compose.yaml exec --user 10000 minecraft mc-send-to-console forge tps
 
-# 4. Add mods to mods/ directory
+The selected login policy allows offline accounts without a whitelist or password and grants the configured owner OP. Anyone choosing that name can receive its permissions. This is an explicit deployment choice, not identity verification.
 
-# 5. Start the server
-./scripts/start.sh
-```
+## Lifecycle and data
 
-## Project Structure
+One instance owns the stateful Forge world. scripts/stop.sh requests a graceful stop. A native service starts the Compose project after Docker and the data mount. Native qualification checks the loaded pack, actual cgroup limits, external protocol access, client join and save/restart behavior.
 
-```
-rldyourmcrft/
-├── scripts/
-│   ├── install.sh       # Download and install Forge server
-│   ├── start.sh         # Launch server (Aikar's JVM flags)
-│   ├── backup.sh        # World backup with rotation
-│   └── restore.sh       # Restore world from backup
-├── config/              # Mod configuration files
-├── mods/                # Mod JAR files (not tracked in git)
-├── server.properties    # Server configuration
-├── .env.example         # Environment template
-├── ops.json.example     # Operator list template
-└── whitelist.json.example
-```
-
-## Server Management
-
-### Backups
-
-```bash
-# Create a backup
-./scripts/backup.sh
-
-# List available backups
-./scripts/restore.sh
-
-# Restore a specific backup (stop the server first!)
-./scripts/restore.sh world_backup_2026-03-15_12-00-00.tar.gz
-```
-
-### Configuration
-
-All runtime settings are in `.env`:
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `MIN_RAM` | `4G` | Minimum JVM heap |
-| `MAX_RAM` | `4G` | Maximum JVM heap |
-| `JAVA_PATH` | (system) | Path to Java 8 binary |
-| `FORGE_VERSION` | `1.12.2-14.23.5.2860` | Forge build |
-| `BACKUP_KEEP_COUNT` | `10` | Max backups to retain |
-
-## Forge Version
-
-- Minecraft: **1.12.2**
-- Forge: **14.23.5.2860** (latest recommended)
-- Forge installer: auto-downloaded by `install.sh`
-
-## Adding Mods
-
-1. Download mod `.jar` files compatible with **Minecraft 1.12.2**
-2. Place them in the `mods/` directory
-3. Restart the server
-4. Mod configs will appear in `config/` after first launch
-
-## Notes
-
-- Always stop the server before restoring backups
-- Mod JARs are excluded from git (too large). Document your modlist separately
-- The `config/` directory is tracked - commit config changes to keep server reproducible
-- `online-mode=true` by default for security. Disable only for offline/LAN play
+Automatic backups are disabled. No backup/restore command is installed. Keep worlds out of source control and generic cleanup. Bound Docker logs separately from game logs and monitor filesystem capacity.
 
 ## Source checks
 
-Run `just check` to validate every shell script, the GitHub workflows and source
-history. CI prepares the exact tools declared in `.github/workflows/ci.yml` and the
-archive/member hashes in `.github/ci-tools.json`;
-local checks use those tools from `PATH`. `just verify` runs the complete source
-check. These commands do not install or start the server, create a backup or restore
-a world.
+Run just check for shell/workflow/history checks and Python syntax. just test covers installation input validation without running Minecraft. just verify composes the checks. Native server/client qualification and its limits are recorded separately.
